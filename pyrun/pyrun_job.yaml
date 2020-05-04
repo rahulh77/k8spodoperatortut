@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: pyrun-job
+spec:
+  ttlSecondsAfterFinished: 0
+  template:
+    metadata:
+      name: pyrun-job
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: pyrun
+          image: rahulh77/pyrun
+          args: ["10"]
+          resources:
+            requests:
+              cpu: 150m
+              memory: 200Mi
+            limits:
+              cpu: 150m
+              memory: 200Mi

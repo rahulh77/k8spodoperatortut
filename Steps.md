@@ -11,6 +11,8 @@
  docker login docker.io
  docker image tag pyrun:latest rahulh77/pyrun:latest
  docker push rahulh77/pyrun:latest
+# run
+docker run --rm -it --name rahulh77/pyruncon pyrun 10
 ```
 
 ## EKS steps
