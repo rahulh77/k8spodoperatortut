@@ -8,38 +8,44 @@ from airflow.operators.dummy_operator import DummyOperator
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': days_ago(2),
+    'start_date': datetime(2020, 5, 5),
     'email': ['airflow@example.com'],
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 1,
-    'retry_delay': timedelta(minutes=5)
+    'retry_delay': timedelta(seconds=10)
 }
 
 dag = DAG(
-    'kubernetes_sample', default_args=default_args, schedule_interval=None)
+    'test_k8spodoperator', default_args=default_args, schedule_interval=None)
 
 
 start = DummyOperator(task_id='run_this_first', dag=dag)
 
 passing = KubernetesPodOperator(namespace='default',
-                          image="Python:3.6",
-                          cmds=["Python","-c"],
+                          image="python:3.7-stretch",
+                          cmds=["python","-c"],
                           arguments=["print('hello world')"],
                           labels={"foo": "bar"},
                           name="passing-test",
                           task_id="passing-task",
+                          cluster_context='docker-desktop',
+                          is_delete_operator_pod=True,
+                          in_cluster=False,
                           get_logs=True,
                           dag=dag
                           )
 
 failing = KubernetesPodOperator(namespace='default',
-                          image="ubuntu:1604",
-                          cmds=["Python","-c"],
+                          image="ubuntu:20.04",
+                          cmds=["python","-c"],
                           arguments=["print('hello world')"],
                           labels={"foo": "bar"},
                           name="fail",
                           task_id="failing-task",
+                          cluster_context='docker-desktop',
+                          is_delete_operator_pod=True,
+                          in_cluster=False,
                           get_logs=True,
                           dag=dag
                           )
